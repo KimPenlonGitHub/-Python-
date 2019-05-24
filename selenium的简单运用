@@ -1,0 +1,45 @@
+from selenium import webdriver # 从selenium库中调用webdriver模块
+import time # 调用time模块
+driver = webdriver.Chrome() # 设置引擎为Chrome，真实地打开一个Chrome浏览器
+
+driver.get('https://wordpress-edu-3autumn.localprod.forc.work/wp-login.php') # 访问页面
+time.sleep(2) # 暂停两秒，等待浏览器缓冲
+
+# 获取用户输入的评论内容
+while True:
+    comment_content = input(' 请输入你想要的评论的内容，按回车提交：')
+    if comment_content == '':
+        print('&' * 5, ' 评论内容不允许为空', '&' * 5)
+    else:
+        break
+# 定位到用户名输入框，输入用户名
+login_name = driver.find_element_by_id('user_login')
+login_name.send_keys('spiderman')
+time.sleep(1)
+# 定位到密码输入框，输入密码
+password = driver.find_element_by_id('user_pass')
+password.send_keys('crawler334566')
+time.sleep(1)
+# 定位到登录按钮，并点击按钮
+submit_btn = driver.find_element_by_id('wp-submit')
+submit_btn.click()
+time.sleep(2)
+
+# 通过链接的部分文本定位到 '《未来已来（三）—— 同九义何汝秀》' 这篇文章
+# 获取到该文章对应的 a 标签（超链接），并点击链接进入文章详情页
+article_link = driver.find_element_by_partial_link_text(' 同九义何汝秀')
+article_link.click()
+time.sleep(2)
+
+# 进入文章详情页，定位到该页面下编写评论的文本框，输入内容
+comment_area = driver.find_element_by_id('comment')
+comment_area.send_keys(comment_content)
+time.sleep(2)
+# 定位到提交按钮，点击该按钮提交评论
+comment_submit = driver.find_element_by_id('submit')
+comment_submit.click()
+
+# 评论成功 10 秒后关闭浏览器
+time.sleep(10)
+driver.close()
+print('#' * 6, ' 评论成功，浏览器已关闭', '#' * 6)
