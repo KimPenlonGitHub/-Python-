@@ -1,0 +1,55 @@
+#第一种方法：只使用 selenium
+from selenium import  webdriver # 从 selenium 库中调用 webdriver 模块
+import time
+
+
+driver = webdriver.Chrome() # 声明浏览器对象
+driver.get('https://localprod.pandateacher.com/python-manuscript/hello-spiderman/') # 访问页面
+time.sleep(2) # 暂停两秒，等待浏览器缓冲
+
+
+teacher = driver.find_element_by_id('teacher') # 找到【请输入你喜欢的老师】下面的输入框位置
+teacher.send_keys(' 必须是吴枫呀') # 输入文字
+assistant = driver.find_element_by_name('assistant') # 找到【请输入你喜欢的助教】下面的输入框位置
+assistant.send_keys(' 都喜欢') # 输入文字
+button = driver.find_element_by_class_name('sub') # 找到【提交】按钮
+button.click() # 点击【提交】按钮
+time.sleep(1)
+
+
+contents = driver.find_elements_by_class_name('content') # 定位到 Python 之禅所在的标签
+for content in contents:
+    title = content.find_element_by_tag_name('h1').text # 提取标题
+    chan = content.find_element_by_tag_name('p').text # 提取正文
+    print(title + '\n' + chan + '\n') # 打印标题与正文
+driver.close()
+
+
+#第二种方法：selenium 与 BeautifulSoup 配合
+from selenium import  webdriver # 从 selenium 库中调用 webdriver 模块
+import time
+from bs4 import BeautifulSoup
+
+
+driver = webdriver.Chrome() # 声明浏览器对象
+driver.get('https://localprod.pandateacher.com/python-manuscript/hello-spiderman/') # 访问页面
+time.sleep(2) # 暂停两秒，等待浏览器缓冲
+
+
+teacher = driver.find_element_by_id('teacher') # 定位到【请输入你喜欢的老师】下面的输入框位置
+teacher.send_keys(' 必须是吴枫呀') # 输入文字
+assistant = driver.find_element_by_name('assistant') # 定位到【请输入你喜欢的助教】下面的输入框位置
+assistant.send_keys(' 都喜欢') # 输入文字
+button = driver.find_element_by_class_name('sub') # 定位到【提交】按钮
+button.click() # 点击【提交】按钮
+time.sleep(1) # 等待一秒
+
+
+pageSource = driver.page_source # 获取页面信息
+soup = BeautifulSoup(pageSource,'html.parser')  # 使用 bs 解析网页
+contents = soup.find_all(class_="content") # 找到源代码 Python 之禅中文版和英文版所在的元素
+for content in contents:  # 遍历列表
+    title = content.find('h1').text # 提取标题
+    chan = content.find('p').text.replace('  ','') # 提取 Python 之禅的正文，并且去掉文字前面的所有空格
+    print(title + chan + '\n') # 打印 Python 之禅的标题与正文
+driver.close()
